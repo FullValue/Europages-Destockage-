@@ -17,7 +17,7 @@ npm start            # ou : node server.js   (PORT=8080 node server.js pour chan
 npm run seed         # réinitialise la base (63 lots Deal Stock + données de démo)
 ```
 
-Mot de passe du back-office : il est fixé à la création de la base.
+Connexion au back-office : identifiant `admin` (ou la valeur de `ADMIN_USER`) et un mot de passe fixé à la création de la base.
 
 - Avec la variable `ADMIN_PASSWORD` : `ADMIN_PASSWORD="votre-mot-de-passe" npm run seed`. En hébergement, définissez-la avant le premier démarrage.
 - Sans variable : un mot de passe aléatoire est généré et affiché **une seule fois** dans la console.
@@ -30,6 +30,7 @@ Vous pouvez ensuite le changer dans **Paramètres**. La base (`data/db.json`) n'
 2. **Ajouter une base Postgres** : onglet *Storage → Create Database → Neon (Postgres)*, puis reliez-la au projet. Vercel crée la variable `DATABASE_URL`. Elle est obligatoire, car le disque de Vercel n'est pas conservé.
 3. **Ajouter Vercel Blob** pour les photos envoyées depuis l'admin : *Storage → Create → Blob*, relié au projet, qui crée `BLOB_READ_WRITE_TOKEN`.
 4. **Variables d'environnement** (*Settings → Environment Variables*) :
+   - `ADMIN_USER` (facultatif, `admin` par défaut) : l'identifiant de l'admin.
    - `ADMIN_PASSWORD` : le mot de passe de l'admin. Il reste toujours valable, même après un changement dans Paramètres : c'est le mot de passe de secours.
    - `SESSION_SECRET` (conseillé) : une longue chaîne aléatoire qui signe les sessions.
 5. **Redéployer** (*Deployments → Redeploy*) pour que les variables soient prises en compte.

@@ -42,7 +42,7 @@ function buildSeed() {
   const db = {
     counters: { products: products.length, requests: 0, orders: 0, customers: 0, messages: 0, movements: 0 },
     settings: {
-      adminPassword: hash(ADMIN_PASSWORD), shippingFee: 5.9, freeShippingFrom: 60, vatRate: 0.2, lowStockDefault: 10,
+      adminUser: process.env.ADMIN_USER || "admin", adminPassword: hash(ADMIN_PASSWORD), shippingFee: 5.9, freeShippingFrom: 60, vatRate: 0.2, lowStockDefault: 10,
       company: { name: "Compack", email: "contact@compackeurodestockage.fr", phone: "", address: "Argenteuil (95)", siret: "" },
     },
     categories: CATS, products, requests: [], orders: [], customers: [], messages: [], movements: [],

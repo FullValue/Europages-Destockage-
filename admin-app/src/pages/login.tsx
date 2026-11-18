@@ -7,12 +7,13 @@ import { Label } from "@/components/ui/label"
 import { api } from "@/lib/api"
 
 export function LoginPage({ onLogin }: { onLogin: () => void }) {
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [busy, setBusy] = useState(false)
   const submit = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true); setError("")
-    try { await api("login", "POST", { password }); onLogin() }
+    try { await api("login", "POST", { username, password }); onLogin() }
     catch (err) { setError((err as Error).message) }
     finally { setBusy(false) }
   }
@@ -23,7 +24,8 @@ export function LoginPage({ onLogin }: { onLogin: () => void }) {
         <CardContent>
           <form onSubmit={submit} className="grid gap-4">
             {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
-            <div className="grid gap-2"><Label htmlFor="pw">Mot de passe</Label><Input id="pw" type="password" autoComplete="current-password" autoFocus required value={password} onChange={e => setPassword(e.target.value)} /></div>
+            <div className="grid gap-2"><Label htmlFor="user">Identifiant</Label><Input id="user" autoComplete="username" autoCapitalize="none" autoFocus required value={username} onChange={e => setUsername(e.target.value)} /></div>
+            <div className="grid gap-2"><Label htmlFor="pw">Mot de passe</Label><Input id="pw" type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} /></div>
             <Button type="submit" disabled={busy}>{busy ? "Connexion…" : "Se connecter"}</Button>
           </form>
         </CardContent>
