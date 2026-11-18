@@ -9,7 +9,7 @@ export const eur = (n: number | null | undefined) => {
 export const num = (n: number | null | undefined) => (n == null ? "—" : (n < 0 ? "-" : "") + grp(String(Math.abs(Math.round(n)))))
 export const date = (d?: string) => (d ? new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—")
 export const dateTime = (d?: string) => (d ? new Date(d).toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—")
-export const imgUrl = (p: string) => "/" + p.replace(/^\//, "")
+export const imgUrl = (p: string) => (/^https?:\/\//.test(p) ? p : "/" + p.replace(/^\//, ""))
 export const lowOf = (p: Product, s: Settings | null) => p.alertThreshold ?? s?.lowStockDefault ?? 10
 
 export type Tone = "warn" | "info" | "ok" | "bad" | "mute" | "ds" | "mk"

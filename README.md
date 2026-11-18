@@ -1,6 +1,6 @@
 # Compack — Destock, Market et back-office
 
-Un seul serveur Node, sans dépendance, et une seule base (`data/db.json`). Le stock est commun aux deux sites.
+Deux sites et un back-office sur une seule adresse, avec un stock commun. En local, la base est un fichier (`data/db.json`). Sur Vercel, c'est Postgres (voir plus bas).
 
 | Adresse | Rôle |
 |---|---|
@@ -12,6 +12,7 @@ Un seul serveur Node, sans dépendance, et une seule base (`data/db.json`). Le s
 ## Lancer
 
 ```bash
+npm install          # une seule fois
 npm start            # ou : node server.js   (PORT=8080 node server.js pour changer de port)
 npm run seed         # réinitialise la base (63 lots Deal Stock + données de démo)
 ```
@@ -22,6 +23,20 @@ Mot de passe du back-office : il est fixé à la création de la base.
 - Sans variable : un mot de passe aléatoire est généré et affiché **une seule fois** dans la console.
 
 Vous pouvez ensuite le changer dans **Paramètres**. La base (`data/db.json`) n'est pas versionnée : elle est créée automatiquement au premier lancement.
+
+## Mettre en ligne sur Vercel
+
+1. **Importer le dépôt** dans Vercel (*Add New → Project*). Gardez les réglages proposés : `vercel.json` s'occupe de tout (preset « Other », pas de commande de build, dossier `public`).
+2. **Ajouter une base Postgres** : onglet *Storage → Create Database → Neon (Postgres)*, puis reliez-la au projet. Vercel crée la variable `DATABASE_URL`. Elle est obligatoire, car le disque de Vercel n'est pas conservé.
+3. **Ajouter Vercel Blob** pour les photos envoyées depuis l'admin : *Storage → Create → Blob*, relié au projet, qui crée `BLOB_READ_WRITE_TOKEN`.
+4. **Variables d'environnement** (*Settings → Environment Variables*) :
+   - `ADMIN_PASSWORD` : le mot de passe de l'admin. Il reste toujours valable, même après un changement dans Paramètres : c'est le mot de passe de secours.
+   - `SESSION_SECRET` (conseillé) : une longue chaîne aléatoire qui signe les sessions.
+5. **Redéployer** (*Deployments → Redeploy*) pour que les variables soient prises en compte.
+
+Au premier appel, la base se remplit toute seule avec le catalogue et les données de démo. Adresses : `/destock/`, `/market/` et `/admin/` sur le même domaine.
+
+Fonctionnement technique : les pages de `public/` sont servies telles quelles, et toutes les routes `/api/*` passent par une seule fonction (`api/handler.js` → `lib/app.js`). La base tient dans une ligne JSONB, verrouillée pendant chaque écriture, ce qui évite les stocks faux lors de commandes simultanées. Les photos sont réduites dans le navigateur (1600 px, JPEG) avant l'envoi, pour rester sous la limite de 4,5 Mo des fonctions Vercel.
 
 ## Modifier le back-office
 
@@ -51,5 +66,5 @@ Pour ajouter un composant : `cd admin-app && npx shadcn@latest add <composant>`.
 - Supprimer les données de démo (Paramètres → « Supprimer les données de démo »).
 - Brancher un vrai paiement (Stripe, etc.) à la place de la carte simulée.
 - Brancher l'envoi d'e-mails : aucun e-mail n'est envoyé aujourd'hui.
-- Héberger derrière HTTPS et sauvegarder régulièrement `data/db.json` et `public/assets/uploads/`.
+- Sauvegarder régulièrement la base : la ligne `compack_store` dans Postgres, ou `data/db.json` en local.
 - Compléter les mentions légales et les CGV des deux sites.

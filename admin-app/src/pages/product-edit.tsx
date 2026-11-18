@@ -22,6 +22,17 @@ const BLANK: Omit<Product, "id" | "createdAt"> = {
 }
 type Form = Omit<Product, "id" | "createdAt"> & { id?: string; createdAt?: string }
 const toNum = (v: string) => (v === "" ? null : +v)
+/** Réduit la photo (1600 px max, JPEG) : l'envoi reste sous la limite de 4,5 Mo des fonctions Vercel. */
+async function toJpeg(file: File, max = 1600): Promise<string> {
+  const bmp = await createImageBitmap(file)
+  const k = Math.min(1, max / Math.max(bmp.width, bmp.height))
+  const canvas = document.createElement("canvas")
+  canvas.width = Math.round(bmp.width * k); canvas.height = Math.round(bmp.height * k)
+  const g = canvas.getContext("2d")!
+  g.fillStyle = "#fff"; g.fillRect(0, 0, canvas.width, canvas.height)
+  g.drawImage(bmp, 0, 0, canvas.width, canvas.height)
+  return canvas.toDataURL("image/jpeg", 0.85)
+}
 const REASONS = ["Réception fournisseur", "Inventaire", "Casse / perte", "Retour client", "Vente hors site"].map(value => ({ value, label: value }))
 
 export function ProductEditPage({ id }: { id: string }) {
@@ -67,9 +78,8 @@ export function ProductEditPage({ id }: { id: string }) {
   const upload = (files: FileList | null) => run(async () => {
     const added: string[] = []
     for (const file of Array.from(files || [])) {
-      if (file.size > 8e6) { toast.error(`${file.name} : 8 Mo maximum`); continue }
-      const dataUrl = await new Promise<string>(ok => { const r = new FileReader(); r.onload = () => ok(String(r.result)); r.readAsDataURL(file) })
-      added.push((await api<{ path: string }>("upload", "POST", { data: dataUrl })).path)
+      if (file.size > 25e6) { toast.error(`${file.name} : 25 Mo maximum`); continue }
+      added.push((await api<{ path: string }>("upload", "POST", { data: await toJpeg(file) })).path)
     }
     if (added.length) { setF(cur => cur && { ...cur, images: [...cur.images, ...added] }); toast.success("Photo ajoutée, pensez à enregistrer") }
     if (fileRef.current) fileRef.current.value = ""
