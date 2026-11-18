@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lots de déstockage pour professionnels — Compack Destock</title><meta name="description" content="Lots de déstockage, surstocks et fins de séries. Prix HT transparents, quantités vérifiées.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/illustrations/warehouse.jpg"><link rel="stylesheet" href="styles.css"></head>
+<body data-page="home"><div id="header"></div>
+
+<main>
+<section class="hero" aria-labelledby="hero-title">
+  <img class="hero-photo" src="assets/illustrations/warehouse.jpg" alt="Rayonnages, palettes et cartons dans un entrepôt logistique" fetchpriority="high" width="2000" height="1333">
+  <div class="container">
+    <div class="hero-content">
+      <p class="eyebrow hero-eyebrow"><span></span> Le déstockage, côté pro.</p>
+      <h1 id="hero-title">Du stock pour vous.<br><span>Des opportunités pour votre activité.</span></h1>
+      <p class="lead">Surstocks, fins de séries, lots de marques. Trouvez les bons produits, au bon prix, pour faire grandir votre commerce.</p>
+      <form class="hero-search" id="hsearch" role="search" action="lots.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+        <input name="q" type="search" placeholder="Un produit, une catégorie, une référence…" aria-label="Rechercher dans les lots">
+        <button class="btn primary" type="submit">Trouver un lot <span aria-hidden="true">→</span></button>
+      </form>
+      <div class="hero-popular"><span>À découvrir</span><a href="lots.html?cat=textile">Textile</a><a href="lots.html?cat=outillage">Outillage</a><a href="lots.html?cat=cuisine">Cuisine</a><a href="lots.html?cat=hightech">High-tech</a></div>
+      <div class="hero-actions"><a class="btn primary lg" href="lots.html">Explorer le catalogue <span aria-hidden="true">↗</span></a><a class="btn hero-secondary lg" href="vendre.html">J’ai du stock à vendre <span aria-hidden="true">→</span></a></div>
+    </div>
+    <div class="hero-caption"><span class="caption-line"></span> Gros &amp; semi-gros · Réservé aux professionnels</div>
+  </div>
+</section>
+<section class="stock-strip" aria-label="Compack en quelques chiffres"><div class="container hero-stats">
+  <div><b id="s-lots">—</b><span>lots à découvrir</span></div><div><b id="s-pcs">—</b><span>pièces disponibles</span></div>
+  <div><b>Argenteuil <small>95</small></b><span>retrait au showroom</span></div><div><b>24 h</b><span>pour vous répondre</span></div>
+</div></section>
+
+<section class="section"><div class="container"><div class="sec-head"><div><p class="eyebrow">À chaque commerce, son stock</p><h2>Explorez nos univers</h2></div><a class="text-link" href="lots.html">Voir tous les lots →</a></div><div class="cats" id="cats"></div></div></section>
+
+<section class="section white"><div class="container"><div class="sec-head"><div><p class="eyebrow">Derniers arrivages</p><h2>Les bonnes affaires n’attendent pas.</h2></div><a class="text-link" href="lots.html">Voir tous les lots →</a></div><div class="grid" id="latest"></div></div></section>
+
+<section class="section"><div class="container"><div class="sec-head"><div><p class="eyebrow">Simple &amp; rapide</p><h2>Comment ça marche ?</h2></div></div>
+<div class="steps"><div class="step"><b>1</b><h3>Choisissez un lot</h3><p>Consultez quantité, état, prix du lot, prix unitaire et valeur publique.</p></div>
+<div class="step"><b>2</b><h3>Demandez un devis</h3><p>Ajoutez vos lots à votre demande et envoyez vos coordonnées.</p></div>
+<div class="step"><b>3</b><h3>Validation &amp; livraison</h3><p>Nous confirmons disponibilité, transport et règlement, puis expédions.</p></div></div></div></section>
+
+<section class="section cta-section"><div class="container cta-grid">
+  <article class="cta-band cta-sell"><img src="assets/illustrations/logistics.jpg" alt="" loading="lazy" width="1400" height="933"><div class="cta-content"><p class="eyebrow">Faites de la place. Créez de la valeur.</p><h2>Votre surstock a<br>de l’avenir.</h2><p>Invendus, fins de séries ou surplus : proposez vos lots à notre équipe achat.</p><a class="btn primary lg" href="vendre.html">Proposer mon stock <span aria-hidden="true">↗</span></a></div></article>
+  <article class="cta-band cta-visit"><img src="assets/illustrations/warehouse.jpg" alt="" loading="lazy" width="2000" height="1333"><div class="cta-content"><p class="eyebrow">Un contact, du concret</p><h2>Parlons de votre<br>prochain arrivage.</h2><p>Une question sur un lot ou un retrait à Argenteuil ? Notre équipe vous accompagne.</p><a class="btn hero-secondary lg" href="contact.html">Contacter l’équipe <span aria-hidden="true">→</span></a></div></article>
+</div></section>
+</main>
+<div id="footer"></div><script src="/api/public/destock.js"></script><script src="app.js"></script></body></html>

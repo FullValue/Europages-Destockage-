@@ -1,0 +1,12 @@
+{
+  "name": "compack-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Compack Destock (gros) + Compack Market (détail) + back-office, stock commun",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seed.js --force",
+    "build:admin": "npm --prefix admin-app run build"
+  },
+  "engines": { "node": ">=18" }
+}

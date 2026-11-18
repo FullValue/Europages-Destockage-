@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ma demande de devis — Compack Destock</title><meta name="description" content="Récapitulatif de vos lots et envoi de votre demande de devis.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"></head>
+<body data-page="cart"><div id="header"></div><div class="crumbs"><div class="container"><a href="index.html">Accueil</a><span>›</span><b style="font-weight:700;color:var(--ink)">Ma demande</b></div></div>
+
+<main class="container"><div class="page-title"><h1>Ma demande de devis</h1></div><div id="flash"></div>
+<div class="form-wrap"><div class="panel"><h2>Lots sélectionnés</h2><div id="cartlist"></div></div>
+<form class="panel" id="devis"><h2>Vos coordonnées</h2>
+<div class="field"><label>Nom et prénom *</label><input name="nom" required autocomplete="name"></div>
+<div class="field"><label>Société *</label><input name="societe" required autocomplete="organization"></div>
+<div class="row2"><div class="field"><label>E-mail *</label><input name="email" type="email" required autocomplete="email"></div><div class="field"><label>Téléphone</label><input name="tel" type="tel" autocomplete="tel"></div></div>
+<div class="field"><label>N° TVA / SIRET</label><input name="siret"></div>
+<div class="field"><label>Adresse de livraison</label><input name="adresse" autocomplete="street-address"></div>
+<div class="field"><label>Message</label><textarea name="message" placeholder="Précisions, délais souhaités…"></textarea></div>
+<button class="btn primary lg block" id="sendbtn">Envoyer ma demande</button>
+<p style="font-size:12px;color:var(--muted);margin:10px 0 0">Vente réservée aux professionnels. Aucun paiement en ligne : un devis vous est envoyé.</p></form></div></main>
+<div id="footer"></div><script src="/api/public/destock.js"></script><script src="app.js"></script></body></html>

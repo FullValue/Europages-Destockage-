@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Commande — Compack Market</title><meta name="description" content="Finaliser votre commande.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="market.css"></head>
+<body data-page="checkout"><div id="header"></div>
+
+<main class="container"><div class="page-h"><h1>Finaliser ma commande</h1></div>
+<div class="cartwrap" id="co"><form class="panel" id="cof"><div id="err"></div>
+<h2>Livraison</h2>
+<div class="two"><div class="field"><label for="n">Nom complet *</label><input id="n" name="name" required autocomplete="name"></div><div class="field"><label for="t">Téléphone</label><input id="t" name="phone" type="tel" autocomplete="tel"></div></div>
+<div class="field"><label for="e">E-mail *</label><input id="e" name="email" type="email" required autocomplete="email"></div>
+<div class="field"><label for="a">Adresse *</label><input id="a" name="address" required autocomplete="street-address"></div>
+<div class="two"><div class="field"><label for="z">Code postal *</label><input id="z" name="zip" required autocomplete="postal-code" pattern="[0-9]{4,5}"></div><div class="field"><label for="c">Ville *</label><input id="c" name="city" required autocomplete="address-level2"></div></div>
+<div class="field"><label for="no">Instructions de livraison</label><input id="no" name="notes" placeholder="Digicode, étage…"></div>
+<h2 style="margin-top:20px">Paiement</h2>
+<div class="payopts"><label><input type="radio" name="payment" value="carte" checked><span>Carte bancaire<small>Mode démo : le paiement est simulé, aucune carte n'est demandée</small></span></label>
+<label><input type="radio" name="payment" value="virement"><span>Virement bancaire<small>Commande préparée à réception du virement</small></span></label>
+<label><input type="radio" name="payment" value="retrait"><span>Retrait au showroom (Argenteuil)<small>Paiement sur place</small></span></label></div>
+<button class="btn brand block" id="pay" style="margin-top:18px">Valider la commande</button>
+<p style="font-size:12px;color:var(--muted)">En validant, vous acceptez nos <a href="cgv.html">CGV</a>.</p></form>
+<aside class="panel sum" id="sum"></aside></div></main>
+<div id="footer"></div><script src="market.js"></script></body></html>

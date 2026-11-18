@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+server.log
+# Base de données et fichiers envoyés : propres à chaque installation
+data/db.json
+data/db.json.tmp
+public/assets/uploads/*
+!public/assets/uploads/.gitkeep
+# Ancienne version du back-office
+archive/
