@@ -10,15 +10,16 @@ import { useConfirm } from "@/components/confirm"
 import { useData } from "@/hooks/use-data"
 import { api } from "@/lib/api"
 import { useApp } from "@/lib/app-context"
-import type { Settings } from "@/lib/types"
+import type { PaymentsStatus, Settings } from "@/lib/types"
 
 const EXPORTS = [["products", "Produits"], ["orders", "Commandes"], ["requests", "Demandes"], ["customers", "Clients"], ["movements", "Mouvements"], ["messages", "Messages"]]
-const COMPANY: [keyof Settings["company"], string][] = [["name", "Raison sociale"], ["email", "E-mail de contact"], ["phone", "Téléphone"], ["address", "Adresse"], ["siret", "SIRET"]]
+const COMPANY: [keyof Settings["company"], string][] = [["name", "Raison sociale"], ["email", "E-mail de contact"], ["phone", "Téléphone"], ["address", "Adresse"], ["siret", "SIRET"], ["iban", "IBAN (affiché pour les virements)"], ["bic", "BIC"]]
 
 export function SettingsPage() {
   const { refresh } = useApp()
   const confirm = useConfirm()
   const { data, error } = useData(() => api<Settings>("settings"))
+  const { data: ps } = useData(() => api<PaymentsStatus>("payments/status"))
   const [s, setS] = useState<Settings | null>(null)
   const [pw, setPw] = useState("")
   useEffect(() => { if (data) setS(data) }, [data])
@@ -57,6 +58,13 @@ export function SettingsPage() {
             <CardContent className="grid gap-4">
               <Field label="Nouveau mot de passe (8 caractères minimum)"><Input type="password" autoComplete="new-password" value={pw} onChange={e => setPw(e.target.value)} /></Field>
               <div><Button variant="secondary" disabled={pw.length < 8} onClick={changePw}>Changer le mot de passe</Button></div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader><CardTitle>Paiements</CardTitle><CardDescription>Clés à renseigner dans les variables d'environnement du projet Vercel, jamais ici.</CardDescription></CardHeader>
+            <CardContent className="grid gap-2 text-sm">
+              <div className="flex justify-between gap-3"><span>Mollie : carte bancaire et liens de paiement</span><b>{!ps ? "…" : ps.mollie ? (ps.mollieTest ? "Mode test" : "Actif") : "Non configuré"}</b></div>
+              <div className="flex justify-between gap-3"><span>Qonto : rapprochement des virements</span><b>{!ps ? "…" : ps.qonto ? (ps.cron ? "Actif (chaque jour à 8 h)" : "Actif (manuel)") : "Non configuré"}</b></div>
             </CardContent>
           </Card>
           <Card>

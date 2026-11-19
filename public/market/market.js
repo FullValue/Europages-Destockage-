@@ -174,14 +174,21 @@ function checkout() {
   if (!ls.length) { $("#co").innerHTML = `<div class="empty" style="grid-column:1/-1">Votre panier est vide. <a href="boutique.html">Retour à la boutique</a></div>`; return; }
   $("#sum").innerHTML = summary(ls, false) + `<div style="margin-top:14px">${ls.map(i => `<div class="sumrow" style="font-size:13px;color:var(--muted)"><span>${i.qty} × ${esc(i.p.name)}</span><span>${eur(i.p.price * i.qty)}</span></div>`).join("")}</div>`;
   const f = $("#cof");
+  // Carte : Mollie en ligne ; indisponible si Mollie n'est pas configuré
+  const card = f.querySelector('input[value="carte"]');
+  if (!SETTINGS.cardPayment) { card.disabled = true; f.querySelector('input[value="virement"]').checked = true; $("#paycardinfo").textContent = "Momentanément indisponible"; }
+  else if (SETTINGS.cardTest) $("#paycardinfo").textContent = "Mode test : aucune carte réelle n'est débitée";
+  const label = () => { $("#pay").textContent = f.payment.value === "carte" ? "Payer par carte" : "Valider la commande"; };
+  f.addEventListener("change", label); label();
   f.onsubmit = async e => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(f));
     const btn = $("#pay"); btn.disabled = true; btn.textContent = "Traitement…";
     const r = await api("/api/public/market/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customer: { name: d.name, email: d.email, phone: d.phone, address: d.address, zip: d.zip, city: d.city }, payment: d.payment, notes: d.notes, items: cart.get() }) });
-    btn.disabled = false; btn.textContent = "Valider la commande";
-    if (r.error) { $("#err").innerHTML = `<div class="msg err">${esc(r.error)}</div>`; return; }
+    btn.disabled = false; label();
+    if (r.error) { $("#err").innerHTML = `<div class="msg err">${esc(r.error)}</div>`; scrollTo({ top: 0, behavior: "smooth" }); return; }
     cart.set([]);
+    if (r.checkoutUrl) { btn.disabled = true; btn.textContent = "Redirection vers le paiement…"; location.href = r.checkoutUrl; return; }
     location.href = `confirmation.html?id=${encodeURIComponent(r.id)}&email=${encodeURIComponent(d.email)}`;
   };
 }
@@ -194,11 +201,20 @@ function orderView(o) {
   <div class="panel" style="text-align:left">${o.items.map(i => `<div class="sumrow"><span>${i.qty} × ${esc(i.name)}</span><span>${eur(i.lineTTC)}</span></div>`).join("")}
   <div class="sumrow"><span>Livraison</span><span>${o.shipping ? eur(o.shipping) : "Offerte"}</span></div><div class="sumrow tot"><span>Total TTC</span><span>${eur(o.totalTTC)}</span></div>
   <p style="font-size:14px;color:var(--muted);margin:12px 0 0">Paiement : ${pay} — ${o.paymentStatus === "payee" ? "reçu ✔" : "en attente"}${o.tracking ? `<br>N° de suivi : <b>${esc(o.tracking)}</b>` : ""}</p>
-  ${o.payment === "virement" && o.paymentStatus !== "payee" ? `<div class="msg ok">Merci d'effectuer votre virement en indiquant la référence <b>${o.id}</b>. La commande sera préparée dès réception.</div>` : ""}</div>`;
+  ${o.payment === "virement" && o.paymentStatus !== "payee" && o.status !== "annulee" ? `<div class="msg ok">Merci d'effectuer votre virement de <b>${eur(o.totalTTC)}</b> en indiquant la référence <b>${o.id}</b>${SETTINGS.company?.iban ? `<br>IBAN : <b>${esc(SETTINGS.company.iban.replace(/(.{4})/g, "$1 ").trim())}</b>${SETTINGS.company.bic ? ` · BIC : <b>${esc(SETTINGS.company.bic)}</b>` : ""}${SETTINGS.company.name ? `<br>Titulaire : ${esc(SETTINGS.company.name)}` : ""}` : ""}<br>La commande sera préparée dès réception.</div>` : ""}
+  ${o.payUrl ? `<a class="btn brand" style="margin-top:12px" href="${esc(o.payUrl)}">Finaliser le paiement par carte</a>` : ""}</div>`;
 }
 async function confirmation() {
-  const o = await api(`/api/public/market/orders/${encodeURIComponent(Q.get("id"))}?email=${encodeURIComponent(Q.get("email") || "")}`);
-  $("#conf").innerHTML = o.error ? `<div class="msg err">${esc(o.error)}</div>` : `<div class="big">🎉</div><h1>Merci pour votre commande !</h1><p>Votre commande <b>${o.id}</b> est enregistrée. Conservez ce numéro : il vous permet de <a href="suivi.html">suivre votre commande</a> avec votre e-mail.</p>${orderView(o)}<a class="btn brand" style="margin-top:20px" href="boutique.html">Continuer mes achats</a>`;
+  // Au retour de Mollie, le paiement peut mettre quelques secondes à être confirmé : on revérifie quelques fois
+  const check = () => api("/api/public/orders/check", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: Q.get("id"), email: Q.get("email") || "" }) });
+  let o = await check();
+  for (let k = 0; k < 4 && !o.error && o.payment === "carte" && o.paymentStatus !== "payee" && o.status !== "annulee" && !o.payUrl; k++) { await new Promise(r => setTimeout(r, 2500)); o = await check(); }
+  const head = o.error ? "" : o.status === "annulee" && o.payment === "carte"
+    ? `<div class="big">😕</div><h1>Paiement non abouti</h1><p>Le paiement de la commande <b>${o.id}</b> n'a pas été validé : la commande est annulée et aucun montant n'a été prélevé. Vous pouvez recommencer votre commande.</p>`
+    : o.payment === "carte" && o.paymentStatus !== "payee"
+    ? `<div class="big">⏳</div><h1>Paiement en attente</h1><p>Votre commande <b>${o.id}</b> est enregistrée mais le paiement n'est pas encore confirmé.${o.payUrl ? " Vous pouvez le finaliser ci-dessous." : " Rafraîchissez cette page dans quelques instants."}</p>`
+    : `<div class="big">🎉</div><h1>Merci pour votre commande !</h1><p>Votre commande <b>${o.id}</b> est enregistrée${o.paymentStatus === "payee" ? " et payée" : ""}. Conservez ce numéro : il vous permet de <a href="suivi.html">suivre votre commande</a> avec votre e-mail.</p>`;
+  $("#conf").innerHTML = o.error ? `<div class="msg err">${esc(o.error)}</div>` : `${head}${orderView(o)}<a class="btn brand" style="margin-top:20px" href="boutique.html">${o.status === "annulee" ? "Retour à la boutique" : "Continuer mes achats"}</a>`;
 }
 function track() {
   const f = $("#trackf");

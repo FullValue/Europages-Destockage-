@@ -14,6 +14,9 @@
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/handler?path=:path*" }
   ],
+  "crons": [
+    { "path": "/api/cron/qonto", "schedule": "0 7 * * *" }
+  ],
   "headers": [
     { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }] }
   ]

@@ -1,19 +1,30 @@
 import { useState } from "react"
-import { Download, Plus, Search } from "lucide-react"
+import { Download, Landmark, Plus, Search } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { EmptyRow, ErrorBox, Loading, PageHeader, SelectField, SiteBadge, StatusOf } from "@/components/common"
+import { EmptyRow, ErrorBox, Loading, PageHeader, run, SelectField, SiteBadge, StatusOf } from "@/components/common"
 import { useData } from "@/hooks/use-data"
 import { go } from "@/hooks/use-hash-route"
 import { api } from "@/lib/api"
 import { dateTime, eur, opts, ORDER_ST, PAY_ST } from "@/lib/format"
-import type { Order } from "@/lib/types"
+import { useApp } from "@/lib/app-context"
+import type { Order, PaymentsStatus } from "@/lib/types"
 
 export function OrdersPage() {
-  const { data: list, error } = useData(() => api<Order[]>("orders"))
+  const { refresh } = useApp()
+  const { data: list, error, reload } = useData(() => api<Order[]>("orders"))
+  const { data: ps } = useData(() => api<PaymentsStatus>("payments/status"))
+  const syncQonto = () => run(async () => {
+    const r = await api<{ checked: number; matched: { order: string }[]; review: { order: string }[] }>("qonto/sync", "POST")
+    const m = r.matched.length
+    toast.success(m ? `${m} virement${m > 1 ? "s" : ""} rapproché${m > 1 ? "s" : ""} : ${r.matched.map(x => x.order).join(", ")}` : "Aucun nouveau virement correspondant à une commande")
+    if (r.review.length) toast.warning(`Montant différent à vérifier : ${r.review.map(x => x.order).join(", ")}`)
+    refresh(); reload()
+  })
   const [site, setSite] = useState("all")
   const [st, setSt] = useState("all")
   const [q, setQ] = useState("")
@@ -25,6 +36,7 @@ export function OrdersPage() {
   return (
     <>
       <PageHeader title="Commandes" description="Gros (Destock) et détail (Market)" actions={<>
+        {ps?.qonto && <Button variant="outline" onClick={syncQonto}><Landmark /> Rapprocher les virements Qonto</Button>}
         <Button variant="outline" asChild><a href="/api/admin/export/orders.csv"><Download /> Exporter</a></Button>
         <Button asChild><a href="#/commandes/nouvelle"><Plus /> Saisir une commande</a></Button>
       </>} />

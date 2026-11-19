@@ -203,10 +203,25 @@ function simpleForm(id, okMsg) {
   };
 }
 
+// Retour d'un lien de paiement Mollie envoyé par l'équipe commerciale
+async function paiement() {
+  const Q = new URLSearchParams(location.search);
+  const check = () => post("/api/public/orders/check", { id: Q.get("id") || "", email: Q.get("email") || "" });
+  let o = await check();
+  for (let k = 0; k < 4 && !o.error && o.paymentStatus !== "payee" && !o.payUrl; k++) { await new Promise(r => setTimeout(r, 2500)); o = await check(); }
+  if (o.error) { $("#pres").innerHTML = `<div class="msg err">${esc(o.error)}</div><p>Contactez-nous si le problème persiste.</p>`; return; }
+  const paid = o.paymentStatus === "payee";
+  $("#ptitle").textContent = paid ? "Paiement reçu, merci !" : "Paiement en attente";
+  $("#pres").innerHTML = `${paid ? `<div class="msg ok">Le paiement de la commande <b>${esc(o.id)}</b> est confirmé. Notre équipe prépare votre commande et revient vers vous pour l'enlèvement ou la livraison.</div>` : `<div class="msg err">Le paiement de la commande <b>${esc(o.id)}</b> n'est pas encore confirmé.</div>`}
+    <p>Montant : <b>${eur(o.totalTTC)} TTC</b> (${eur(o.totalHT)} HT)</p>
+    ${o.payUrl ? `<a class="btn primary lg" href="${esc(o.payUrl)}">Finaliser le paiement</a>` : ""}
+    <p style="margin-top:16px"><a href="contact.html">Une question ? Contactez-nous</a></p>`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   layout();
   const p = document.body.dataset.page;
-  ({ home, lots: catalogue, lot: detail, cart: demande }[p] || (() => {}))();
+  ({ home, lots: catalogue, lot: detail, cart: demande, paiement }[p] || (() => {}))();
   simpleForm("#contactform", "<b>Message envoyé.</b> Nous vous répondons sous 24 h ouvrées.");
   simpleForm("#sellform", "<b>Proposition reçue.</b> Notre équipe achat vous recontacte rapidement.");
   const hs = $("#hsearch"); if (hs) hs.onsubmit = e => { e.preventDefault(); location.href = "lots.html?q=" + encodeURIComponent(hs.q.value); };

@@ -21,7 +21,9 @@ export interface Order {
   id: string; site: Site; customerId: string; customerName: string; email: string; items: OrderItem[]; shipping: number
   totalHT: number; totalTTC: number; status: string; payment: string; paymentStatus: string; requestId: string | null
   tracking: string; notes: string; shippingAddress: string; history: HistoryEntry[]; createdAt: string
+  mollie?: { id: string; kind: "checkout" | "link"; status: string; checkoutUrl: string | null; mode?: string; createdAt: string }
 }
+export interface PaymentsStatus { mollie: boolean; mollieTest: boolean; qonto: boolean; cron: boolean }
 export interface Customer {
   id: string; type: "pro" | "particulier"; sites: Site[]; name: string; company: string; email: string; phone: string
   siret: string; address: string; city: string; zip: string; notes: string; createdAt: string
@@ -38,7 +40,7 @@ export interface Stats {
 }
 export interface Settings {
   shippingFee: number; freeShippingFrom: number; vatRate: number; lowStockDefault: number
-  company: { name?: string; email?: string; phone?: string; address?: string; siret?: string }
+  company: { name?: string; email?: string; phone?: string; address?: string; siret?: string; iban?: string; bic?: string }
   categories: Record<string, { name: string; icon: string; destock?: boolean; market?: boolean }>
 }
 export interface Category { key: string; name: string; icon: string; destock: boolean; market: boolean; products: number }

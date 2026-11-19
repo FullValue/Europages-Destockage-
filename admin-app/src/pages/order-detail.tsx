@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { ArrowLeft, Printer, Trash2 } from "lucide-react"
+import { ArrowLeft, Copy, CreditCard, Printer, RefreshCw, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,6 +17,7 @@ import { dateTime, eur, num, opts, ORDER_ST, PAY_ST, PAYMENT } from "@/lib/forma
 import type { Customer, Order } from "@/lib/types"
 
 const FLOW = ["en_attente", "confirmee", "preparation", "expediee", "livree"]
+const MOLLIE_ST: Record<string, string> = { open: "en attente du client", pending: "en cours de validation", authorized: "autorisé", paid: "payé", canceled: "annulé", expired: "expiré", failed: "refusé" }
 
 export function OrderDetailPage({ id }: { id: string }) {
   const { refresh } = useApp()
@@ -37,6 +38,9 @@ export function OrderDetailPage({ id }: { id: string }) {
     if (s === "annulee" && !await confirm({ title: "Annuler la commande ?", description: "Le stock des articles sera restitué. Cette annulation est définitive.", action: "Annuler la commande", destructive: true })) return
     await api("orders/" + id, "PATCH", { status: s }); toast.success("Statut : " + ORDER_ST[s][0]); refresh(); reload()
   })
+  const payLink = () => run(async () => { await api("orders/" + id + "/payment-link", "POST"); toast.success("Lien de paiement créé"); reload() })
+  const payCheck = () => run(async () => { const r = await api<Order>("orders/" + id + "/payment-check", "POST"); toast.success(r.paymentStatus === "payee" ? "Paiement reçu" : "Paiement : " + (MOLLIE_ST[r.mollie?.status || ""] || "en attente")); refresh(); reload() })
+  const copy = (t: string) => navigator.clipboard.writeText(t).then(() => toast.success("Lien copié"), () => toast.error("Copie impossible"))
   const save = () => run(async () => { await api("orders/" + id, "PATCH", { paymentStatus: pay, tracking, notes }); toast.success("Commande enregistrée"); reload() })
   const del = () => run(async () => {
     if (!await confirm({ title: "Supprimer cette commande ?", description: "Suppression définitive de la commande annulée.", action: "Supprimer", destructive: true })) return
@@ -97,6 +101,23 @@ export function OrderDetailPage({ id }: { id: string }) {
           </Card>
         </div>
         <div className="grid gap-4">
+          {!cancelled && <Card className="print:hidden">
+            <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard className="size-4" /> Paiement en ligne</CardTitle></CardHeader>
+            <CardContent className="grid gap-3 text-sm">
+              {o.paymentStatus === "payee"
+                ? <p className="text-muted-foreground">Commande payée{o.mollie ? " via Mollie" : ""}.</p>
+                : o.mollie
+                ? <>
+                    <p>{o.mollie.kind === "checkout" ? "Paiement carte du client" : "Lien de paiement"} : <b>{MOLLIE_ST[o.mollie.status] || o.mollie.status}</b>{o.mollie.mode === "test" ? " (test)" : ""}</p>
+                    {o.mollie.checkoutUrl && ["open", "pending"].includes(o.mollie.status) && <div className="flex gap-2"><Input readOnly value={o.mollie.checkoutUrl} onFocus={e => e.target.select()} /><Button size="icon" variant="outline" onClick={() => copy(o.mollie!.checkoutUrl!)} aria-label="Copier le lien"><Copy /></Button></div>}
+                    <div className="flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={payCheck}><RefreshCw /> Vérifier</Button>{!["open", "pending"].includes(o.mollie.status) && <Button size="sm" onClick={payLink}>Nouveau lien de paiement</Button>}</div>
+                  </>
+                : <>
+                    <p className="text-muted-foreground">Envoyez au client un lien Mollie pour payer {eur(o.totalTTC)} TTC par carte. La commande passe en « payée » dès le paiement.</p>
+                    <div><Button size="sm" onClick={payLink}>Créer un lien de paiement</Button></div>
+                  </>}
+            </CardContent>
+          </Card>}
           <Card>
             <CardHeader><CardTitle>Client</CardTitle>{cu && <CardAction className="print:hidden"><Button variant="link" size="sm" asChild><a href={"#/clients/" + cu.id}>Fiche</a></Button></CardAction>}</CardHeader>
             <CardContent><dl className="grid grid-cols-[6rem_1fr] gap-x-3 gap-y-2 text-sm">

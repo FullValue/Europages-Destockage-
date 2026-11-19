@@ -15,7 +15,7 @@
 <div class="two"><div class="field"><label for="z">Code postal *</label><input id="z" name="zip" required autocomplete="postal-code" pattern="[0-9]{4,5}"></div><div class="field"><label for="c">Ville *</label><input id="c" name="city" required autocomplete="address-level2"></div></div>
 <div class="field"><label for="no">Instructions de livraison</label><input id="no" name="notes" placeholder="Digicode, étage…"></div>
 <h2 style="margin-top:20px">Paiement</h2>
-<div class="payopts"><label><input type="radio" name="payment" value="carte" checked><span>Carte bancaire<small>Mode démo : le paiement est simulé, aucune carte n'est demandée</small></span></label>
+<div class="payopts"><label id="paycard"><input type="radio" name="payment" value="carte" checked><span>Carte bancaire<small id="paycardinfo">Paiement sécurisé par Mollie : CB, Visa, Mastercard, Apple Pay</small></span></label>
 <label><input type="radio" name="payment" value="virement"><span>Virement bancaire<small>Commande préparée à réception du virement</small></span></label>
 <label><input type="radio" name="payment" value="retrait"><span>Retrait au showroom (Argenteuil)<small>Paiement sur place</small></span></label></div>
 <button class="btn brand block" id="pay" style="margin-top:18px">Valider la commande</button>
