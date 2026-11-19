@@ -252,3 +252,48 @@ footer p{font-size:14px;margin:8px 0 0}
 @media(max-width:520px){.hero h1{font-size:34px}.hero{padding-top:36px}.hero-eyebrow{font-size:9px}.hero-search{flex-wrap:wrap;border-radius:10px;gap:4px;padding:6px}.hero-search input{width:calc(100% - 45px);padding:11px 3px;font-size:12px}.hero-search .btn{width:100%;padding:12px}.hero-actions{gap:9px;margin-top:22px}.hero-actions .btn{font-size:11px;padding:11px 13px}.hero-popular{font-size:10px;gap:6px}.hero-popular a{padding:4px 7px}.hero-caption{font-size:8px;margin-top:28px}.hero-stats{grid-template-columns:1fr 1fr;gap:20px 0;padding:23px 0}.hero-stats>div:nth-child(2){border:0}.hero-stats b{font-size:23px}.cats{gap:22px 10px}.cat-photo img{padding:10px}.cat b{font-size:10px}.cat small{font-size:10px}.cat-label{padding-top:9px}.cat-arrow{display:none}.sec-head h2{font-size:26px;line-height:1.2}.sec-head .text-link{font-size:12px}body[data-page="home"] #latest{grid-template-columns:1fr}.cta-band h2{font-size:32px}.cta-band{min-height:310px}.section{padding:38px 0}.cta-section{padding-top:0}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
 .prose h3{margin-top:22px;font-size:17px}
+
+/* Zones d'intervention : carte en relief Île-de-France + Oise */
+.zones{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 75% 40%,#e4ff5c 0%,#c6ff1a 45%,#a8f000 100%);color:#062b14}
+.zones:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#06401c22 1px,transparent 1.4px);background-size:18px 18px;pointer-events:none}
+.zones-grid{position:relative;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:center}
+.zones .eyebrow{color:#0a5a26}
+.zones h2{font-size:clamp(28px,3.2vw,40px);letter-spacing:-1px;line-height:1.08;margin:6px 0 14px}
+.zones-lead{font-size:15.5px;line-height:1.7;color:#123d22;margin:0 0 22px;max-width:480px}
+.zones-list{list-style:none;padding:0;margin:0 0 26px;display:grid;gap:8px}
+.zones-list li{display:flex;gap:12px;align-items:center;background:#ffffffa6;border:1px solid #06401c1f;border-radius:12px;padding:10px 14px;backdrop-filter:blur(4px)}
+.zones-list i{flex:none;width:12px;height:12px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 4px #16a34a2e}
+.zones-list i.hq{background:var(--accent);box-shadow:0 0 0 4px #f2541b33}
+.zones-list i.far{background:#fff;border:2px solid #0a5a26;box-shadow:none}
+.zones-list b{display:block;font-size:14px}.zones-list span{font-size:13px;color:#2f5a3d}
+.zmap{position:relative}
+.zmap-svg{display:block;width:100%;height:auto;overflow:visible}
+.zmap-nei path{fill:#ffffff52;stroke:#06401c38;stroke-width:1}
+.zmap-side use{fill:url(#zside)}
+.zmap-side use:first-child{fill:#022a14}
+.zmap-top .zd{stroke:#eafff0;stroke-width:1.3;stroke-linejoin:round;transition:transform .35s cubic-bezier(.2,.8,.2,1),filter .35s}
+.zmap-top .zd:hover{transform:translateY(-5px);filter:brightness(1.12)}
+.zmap-edge{fill:none;stroke:#064e1f;stroke-width:3;stroke-linejoin:round}
+.zmap-dep{font-size:10px;font-weight:800;letter-spacing:1.6px;fill:#eafff0;text-anchor:middle;paint-order:stroke;stroke:#064e1f80;stroke-width:2.5px;pointer-events:none}
+.zpin line{stroke:#062b14;stroke-width:2}
+.zpin-base{fill:#062b1455}
+.zpin-head{fill:#fff;stroke:#0a5a26;stroke-width:3}
+.zpin.hq .zpin-head{fill:var(--accent);stroke:#fff;stroke-width:3}
+.zpin.hq line{stroke-width:2.5}
+.zpin-pulse{fill:none;stroke:#fff;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:zpulse 2.4s ease-out infinite}
+.zpin.hq .zpin-pulse{stroke:var(--accent)}
+.zpin text{font-size:12px;font-weight:800;fill:#062b14;paint-order:stroke;stroke:#e9ff8a;stroke-width:4px;stroke-linejoin:round}
+.zpin.hq text{font-size:14px}
+@keyframes zpulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(3.2);opacity:0}}
+@media(prefers-reduced-motion:reduce){.zpin-pulse{animation:none;opacity:0}.zmap-top .zd{transition:none}}
+.zmap-inset-wrap{position:absolute;top:0;right:0;width:clamp(78px,16%,118px);background:#ffffffc2;border:1px solid #06401c26;border-radius:12px;padding:8px 8px 4px;text-align:center;box-shadow:0 8px 20px #0a3d1c22}
+.zmap-inset{display:block;width:100%;height:auto}
+.zmap-inset .fr{fill:#d9f99d;stroke:#0a5a26;stroke-width:1}
+.zmap-inset .hl{fill:#15803d;stroke:#064e1f;stroke-width:.6}
+.zmap-inset-wrap span{font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#0a5a26}
+.zmap-legend{position:absolute;left:0;bottom:0;display:flex;gap:14px;font-size:12px;font-weight:700;background:#ffffffc2;border-radius:99px;padding:6px 14px;border:1px solid #06401c1f}
+.zmap-legend span{display:flex;align-items:center;gap:6px}
+.zmap-legend i{width:10px;height:10px;border-radius:50%;background:#fff;border:2.5px solid #0a5a26}
+.zmap-legend i.l-hq{background:var(--accent);border-color:#fff;box-shadow:0 0 0 1px var(--accent)}
+@media(max-width:860px){.zones-grid{grid-template-columns:1fr;gap:28px}.zmap{order:-1}}
+@media(max-width:600px){.zpin text{font-size:15px}.zpin.hq text{font-size:17px}.zmap-dep{font-size:12px}.zmap-legend{position:static;margin-top:10px;width:max-content}}
