@@ -201,3 +201,4 @@ footer.mfoot{background:var(--ink);color:#d4d4d8;margin-top:24px}
   .pinfo h1{font-size:26px}
 }
 @media(max-width:420px){.perks{grid-template-columns:1fr}.logo{font-size:18px}.logo i{width:30px;height:30px}}
+.prose ul{color:#3f3f46;padding-left:20px;line-height:1.6}.prose li{margin:4px 0}
