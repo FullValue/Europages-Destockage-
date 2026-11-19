@@ -8,3 +8,5 @@ public/assets/uploads/*
 !public/assets/uploads/.gitkeep
 # Ancienne version du back-office
 archive/
+.vercel
+.env*

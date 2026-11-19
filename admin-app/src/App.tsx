@@ -21,10 +21,11 @@ import { OrderNewPage } from "@/pages/order-new"
 import { CustomersPage, CustomerDetailPage } from "@/pages/customers"
 import { MessagesPage } from "@/pages/messages"
 import { SettingsPage } from "@/pages/settings"
+import { CategoriesPage } from "@/pages/categories"
 
 const TITLES: Record<string, string> = {
   "": "Tableau de bord", commandes: "Commandes", demandes: "Demandes de devis", clients: "Clients",
-  produits: "Produits & stock", stock: "Mouvements", messages: "Messages", parametres: "Paramètres",
+  produits: "Produits & stock", categories: "Catégories", stock: "Mouvements", messages: "Messages", parametres: "Paramètres",
 }
 
 export default function App() {
@@ -55,6 +56,7 @@ export default function App() {
       case "demandes": return id ? <RequestDetailPage key={id} id={id} /> : <RequestsPage />
       case "clients": return id ? <CustomerDetailPage key={id} id={id} /> : <CustomersPage />
       case "produits": return id ? <ProductEditPage key={id} id={id} /> : <ProductsPage key={query.get("f") || "all"} initialFilter={query.get("f") || "all"} />
+      case "categories": return <CategoriesPage />
       case "stock": return <MovementsPage />
       case "messages": return <MessagesPage />
       case "parametres": return <SettingsPage />

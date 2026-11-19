@@ -1,4 +1,4 @@
-import { Boxes, ExternalLink, FileText, History, LayoutDashboard, LogOut, Mail, Settings, ShoppingCart, Users } from "lucide-react"
+import { Boxes, FolderTree, ExternalLink, FileText, History, LayoutDashboard, LogOut, Mail, Settings, ShoppingCart, Users } from "lucide-react"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarRail, useSidebar } from "@/components/ui/sidebar"
 import { api } from "@/lib/api"
 import { useApp } from "@/lib/app-context"
@@ -15,6 +15,7 @@ export function AppSidebar({ current }: { current: string }) {
     ] },
     { label: "Catalogue", items: [
       { r: "produits", label: "Produits & stock", icon: Boxes, n: stats?.lowStock },
+      { r: "categories", label: "Catégories", icon: FolderTree },
       { r: "stock", label: "Mouvements", icon: History },
     ] },
     { label: "Relation", items: [{ r: "messages", label: "Messages", icon: Mail, n: stats?.newMessages }] },

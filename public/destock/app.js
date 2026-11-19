@@ -72,7 +72,9 @@ document.addEventListener("click", e => { const b = e.target.closest("[data-add]
 function home() {
   const counts = k => LOTS.filter(l => l.cat === k).length;
   const categoryPhotos = { cuisine: "SD-080", maison: "SD-082", textile: "SD-025", mode: "SD-076", enfant: "SD-015", outillage: "SD-087", hightech: "SD-016", sport: "SD-006", autre: "SD-031" };
-  $("#cats").innerHTML = Object.entries(CATS).map(([k, c]) => `<a class="cat cat-${k}" href="lots.html?cat=${k}"><div class="cat-photo"><img src="${k === "autre" ? "assets/illustrations/logistics.jpg" : `assets/lots/${categoryPhotos[k]}-1.jpg`}" alt="" loading="lazy" width="240" height="240"><span class="cat-arrow" aria-hidden="true">↗</span></div><div class="cat-label"><b>${c.name}</b><small>${counts(k)} lot${counts(k) > 1 ? "s" : ""}</small></div></a>`).join("");
+  // Photo de la catégorie : photo choisie pour les catégories d'origine, sinon la photo d'un lot de la catégorie
+  const catPhoto = k => k === "autre" ? "assets/illustrations/logistics.jpg" : categoryPhotos[k] ? `/assets/lots/${categoryPhotos[k]}-1.jpg` : (LOTS.find(l => l.cat === k && l.imgs[0]) || { imgs: ["assets/illustrations/warehouse.jpg"] }).imgs[0];
+  $("#cats").innerHTML = Object.entries(CATS).map(([k, c]) => `<a class="cat cat-${k}" href="lots.html?cat=${k}"><div class="cat-photo"><img src="${catPhoto(k)}" alt="" loading="lazy" width="240" height="240"><span class="cat-arrow" aria-hidden="true">↗</span></div><div class="cat-label"><b>${c.name}</b><small>${counts(k)} lot${counts(k) > 1 ? "s" : ""}</small></div></a>`).join("");
   $("#latest").innerHTML = [...LOTS].filter(l => !l.sold).sort((a, b) => b.n - a.n).slice(0, 6).map(tile).join("");
   $("#s-lots").textContent = LOTS.length;
   $("#s-pcs").textContent = num(LOTS.filter(l => !l.sold).reduce((s, l) => s + (l.qty || 0), 0));

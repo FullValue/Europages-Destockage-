@@ -39,5 +39,6 @@ export interface Stats {
 export interface Settings {
   shippingFee: number; freeShippingFrom: number; vatRate: number; lowStockDefault: number
   company: { name?: string; email?: string; phone?: string; address?: string; siret?: string }
-  categories: Record<string, { name: string; icon: string }>
+  categories: Record<string, { name: string; icon: string; destock?: boolean; market?: boolean }>
 }
+export interface Category { key: string; name: string; icon: string; destock: boolean; market: boolean; products: number }

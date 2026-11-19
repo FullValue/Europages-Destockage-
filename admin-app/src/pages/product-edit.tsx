@@ -51,7 +51,7 @@ export function ProductEditPage({ id }: { id: string }) {
   if (error) return <ErrorBox message={error} />
   if (!data || !f) return <Loading />
 
-  const cats = Object.entries(settings?.categories || {}).map(([value, c]) => ({ value, label: c.name }))
+  const cats = Object.entries(settings?.categories || {}).map(([value, c]) => ({ value, label: c.name + (c.destock === false ? " (Market uniquement)" : c.market === false ? " (Destock uniquement)" : "") }))
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF({ ...f, [k]: v })
   const ds = (patch: Partial<Product["destock"]>) => setF({ ...f, destock: { ...f.destock, ...patch } })
   const mk = (patch: Partial<Product["market"]>) => setF({ ...f, market: { ...f.market, ...patch } })
