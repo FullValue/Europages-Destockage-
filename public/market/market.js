@@ -53,17 +53,20 @@ function layout() {
 const card = p => {
   const d = pct(p);
   return `<article class="pcard">
-  <a class="pimg" href="produit.html?id=${p.id}">${d ? `<span class="disc">-${d}%</span>` : ""}${p.stock > 0 && p.stock <= 5 ? `<span class="low">Plus que ${p.stock}</span>` : ""}<img src="${p.images[0] || ""}" alt="${esc(p.name)}" loading="lazy"></a>
+  <a class="pimg" href="produit.html?id=${p.id}">${d ? `<span class="disc">-${d}%</span>` : ""}${p.stock > 0 && p.stock <= 5 ? `<span class="low">Plus que ${p.stock}</span>` : ""}${pic(p, esc(p.name), 'loading="lazy"')}</a>
   <div class="pbody"><small>${esc(p.sub)}</small><h3><a href="produit.html?id=${p.id}">${esc(p.name)}</a></h3>
   <div class="prow"><div><span class="price">${eur(p.price)}</span>${d ? `<span class="was">${eur(p.compareAt)}</span>` : ""}</div>
   ${p.stock > 0 ? `<button class="addbtn" data-add="${p.id}" aria-label="Ajouter ${esc(p.name)} au panier">+</button>` : `<small style="color:var(--red)">Épuisé</small>`}</div></div></article>`;
 };
 
+// Photo du produit, ou icône de sa catégorie quand aucune photo n'a été ajoutée
+const pic = (p, alt = "", attrs = "") => p.images[0] ? `<img src="${p.images[0]}" alt="${alt}" ${attrs}>` : `<span class="nopic" role="img" aria-label="${alt}">${SETTINGS.categories[p.cat]?.icon || "📦"}</span>`;
+
 /* ---------- pages ---------- */
 function home() {
   const feat = PRODUCTS.filter(p => p.featured && p.stock > 0);
   const deals = [...PRODUCTS].filter(p => p.stock > 0).sort((a, b) => pct(b) - pct(a)).slice(0, 8);
-  const hero = feat[0] || PRODUCTS[0];
+  const hero = feat.find(p => p.images[0]) || PRODUCTS.find(p => p.images[0]);
   if (hero) $("#heroart").innerHTML = `<img src="${hero.images[0]}" alt="">`;
   $("#cats").innerHTML = Object.entries(SETTINGS.categories).filter(([k]) => PRODUCTS.some(p => p.cat === k)).map(([k, c]) => `<a href="boutique.html?cat=${k}"><i>${c.icon}</i>${esc(c.name)}</a>`).join("");
   $("#deals").innerHTML = deals.map(card).join("");
@@ -101,7 +104,7 @@ async function product() {
   const d = pct(p);
   const stock = p.stock <= 0 ? `<span class="dot out"></span>Épuisé` : p.stock <= 5 ? `<span class="dot warn"></span>Plus que ${p.stock} en stock` : `<span class="dot"></span>En stock, expédié sous 48 h`;
   box.innerHTML = `
-  <div class="gallery"><div class="big"><img id="bigimg" src="${p.images[0] || ""}" alt="${esc(p.name)}"></div>
+  <div class="gallery"><div class="big">${pic(p, esc(p.name), 'id="bigimg"')}</div>
     ${p.images.length > 1 ? `<div class="thumbs">${p.images.map((s, k) => `<button class="${k ? "" : "on"}" data-k="${k}" aria-label="Image ${k + 1}"><img src="${s}" alt=""></button>`).join("")}</div>` : ""}</div>
   <div class="pinfo">
     <small style="color:var(--brand-d);font-weight:700;text-transform:uppercase;letter-spacing:.5px">${esc(p.sub)}</small>
@@ -149,7 +152,7 @@ function cartPage() {
     // ajuste les quantités au stock réel
     let fixed = false; ls.forEach(i => { if (i.qty > i.p.stock) { i.qty = i.p.stock; fixed = true; } });
     if (fixed) cart.set(ls.filter(i => i.qty > 0).map(({ id, qty }) => ({ id, qty })));
-    $("#lines").innerHTML = ls.length ? ls.filter(i => i.qty > 0).map(i => `<div class="line"><img src="${i.p.images[0]}" alt="">
+    $("#lines").innerHTML = ls.length ? ls.filter(i => i.qty > 0).map(i => `<div class="line">${pic(i.p)}
       <div><h3><a href="produit.html?id=${i.id}">${esc(i.p.name)}</a></h3><small style="color:var(--muted)">${eur(i.p.price)} l'unité</small><br>
       <div class="qty" style="margin-top:8px"><button data-d="-1" data-id="${i.id}" aria-label="Moins">−</button><input value="${i.qty}" readonly aria-label="Quantité"><button data-d="1" data-id="${i.id}" aria-label="Plus">+</button></div>
       <button class="rm" data-rm="${i.id}">Retirer</button></div><b>${eur(i.p.price * i.qty)}</b></div>`).join("")
